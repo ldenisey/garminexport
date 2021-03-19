@@ -275,20 +275,35 @@ class GarminClient(object):
         :rtype: tuples of (int, datetime)
         """
         ids = []
+        for activity in self._fetch_activities():
+            id = int(activity["activityId"])
+            timestamp_utc = dateutil.parser.parse(activity["startTimeGMT"])
+            # make sure UTC timezone gets set
+            timestamp_utc = timestamp_utc.replace(tzinfo=dateutil.tz.tzutc())
+            ids.append((id, timestamp_utc))
+        return ids
+
+    @require_session
+    def get_activities(self):
+        """Return all activities with all their information.
+
+        :return: The full list of activities, with all their information.
+        :rtype: list of activities info dicts.
+        """
+        activities = []
         batch_size = 100
         # fetch in batches since the API doesn't allow more than a certain
         # number of activities to be retrieved on every invocation
         for start_index in range(0, sys.maxsize, batch_size):
-            next_batch = self._fetch_activity_ids_and_ts(start_index, batch_size)
-            if not next_batch:
+            activity_batch = self._fetch_activities(start_index, batch_size)
+            if not activity_batch:
                 break
-            ids.extend(next_batch)
-        return ids
+            activities.extend(activity_batch)
+        return activities
 
     @require_session
-    def _fetch_activity_ids_and_ts(self, start_index, max_limit=100):
-        """Return a sequence of activity ids (along with their starting
-        timestamps) starting at a given index, with index 0 being the user's
+    def _fetch_activities(self, start_index, max_limit=100):
+        """Return a sequence of activities information starting at a given index, with index 0 being the user's
         most recently registered activity.
 
         Should the index be out of bounds or the account empty, an empty list is returned.
@@ -298,41 +313,24 @@ class GarminClient(object):
         :param max_limit: The (maximum) number of activities to retrieve.
         :type max_limit: int
 
-        :returns: A list of activity JSON dicts describing the activity
-        :rtype: tuples of (int, datetime)
+        :return: A list of activities information.
+        :rtype: list of activity information dicts.
         """
-        log.debug(
-            "fetching activities %d through %d ...",
-            start_index,
-            start_index + max_limit - 1,
-        )
+        log.debug("fetching activities %d through %d ...", start_index, start_index + max_limit - 1)
         response = self.session.get(
             "https://connect.garmin.com/activitylist-service/activities/search/activities",
-            params={"start": start_index, "limit": max_limit},
-        )
+            params={"start": start_index, "limit": max_limit})
         if response.status_code != 200:
             raise Exception(
                 "failed to fetch activities {} to {} types: {}\n{}".format(
-                    start_index,
-                    (start_index + max_limit - 1),
-                    response.status_code,
-                    response.text,
-                )
-            )
+                    start_index, (start_index + max_limit - 1), response.status_code, response.text))
         activities = json.loads(response.text)
         if not activities:
             # index out of bounds or empty account
             return []
 
-        entries = []
-        for activity in activities:
-            id = int(activity["activityId"])
-            timestamp_utc = dateutil.parser.parse(activity["startTimeGMT"])
-            # make sure UTC timezone gets set
-            timestamp_utc = timestamp_utc.replace(tzinfo=dateutil.tz.tzutc())
-            entries.append((id, timestamp_utc))
-        log.debug("got %d activities.", len(entries))
-        return entries
+        log.debug("got %d activities.", len(activities))
+        return activities
 
     @require_session
     def get_activity_summary(self, activity_id):
@@ -705,6 +703,33 @@ class GarminClient(object):
 
         return activity_id
 
+    @require_session
+    def update_activity(self, activity_id, update_kind, update_data):
+        """Update an existing activity.
+
+        :param activity_id: Activity identifier.
+        :type activity_id: int
+        :param update_kind: Kind of data to update. Can be 'activityTypeDTO' to change the type,
+        'activityName' to change its name, ...
+        :type update_kind: str
+        :param update_data New content. For example, to change the type of an activity, should be a dict
+        like {"typeKey": "indoor_cardio"}.
+        :type update_data depends on the kind of data to update, mainly str, int or dict.
+        """
+
+        # Prepare request body
+        data = {update_kind: update_data, 'activityId': activity_id}
+
+        # Update
+        encoding_headers = {"Content-Type": "application/json; charset=UTF-8"}  # see Tapiriik
+        response = self.session.put(
+            "https://connect.garmin.com/proxy/activity-service/activity/{}".format(activity_id),
+            data=json.dumps(data), headers=encoding_headers)
+        if response.status_code != 204:
+            raise Exception(u"failed to update {} activity {}: {}\n{}".format(
+                update_kind, activity_id, response.status_code, response.text))
+        return
+
 
 def new_http_session():
     """Returns a requests-compatible HTTP Session.
@@ -729,3 +754,4 @@ def new_http_session():
     except ImportError:
         pass
     return session_factory_func()
+
