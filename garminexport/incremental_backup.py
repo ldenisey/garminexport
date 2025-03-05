@@ -8,19 +8,25 @@ from typing import Callable, List
 import garminexport.backup
 from garminexport.backup import supported_export_formats
 from garminexport.garminclient import GarminClient
-from garminexport.retryer import Retryer, ExponentialBackoffDelayStrategy, MaxRetriesStopStrategy
+from garminexport.retryer import (
+    Retryer,
+    ExponentialBackoffDelayStrategy,
+    MaxRetriesStopStrategy,
+)
 
 log = logging.getLogger(__name__)
 
 
-def incremental_backup(username: str,
-                       password: str = None,
-                       token: str = None,
-                       jwt_fgp: str = None,
-                       backup_dir: str = os.path.join(".", "activities"),
-                       export_formats: List[str] = None,
-                       ignore_errors: bool = False,
-                       max_retries: int = 7):
+def incremental_backup(
+    username: str,
+    password: str = None,
+    token: str = None,
+    jwt_fgp: str = None,
+    backup_dir: str = os.path.join(".", "activities"),
+    export_formats: List[str] = None,
+    ignore_errors: bool = False,
+    max_retries: int = 7,
+):
     """Performs (incremental) backups of activities for a given Garmin Connect account.
 
     :param username: Garmin Connect user name
@@ -51,8 +57,11 @@ def incremental_backup(username: str,
 
     # set up a retryer that will handle retries of failed activity downloads
     retryer = Retryer(
-        delay_strategy=ExponentialBackoffDelayStrategy(initial_delay=timedelta(seconds=1)),
-        stop_strategy=MaxRetriesStopStrategy(max_retries))
+        delay_strategy=ExponentialBackoffDelayStrategy(
+            initial_delay=timedelta(seconds=1)
+        ),
+        stop_strategy=MaxRetriesStopStrategy(max_retries),
+    )
 
     with GarminClient(username, password, token, jwt_fgp) as client:
         # get all activity ids and timestamps from Garmin account
@@ -60,7 +69,9 @@ def incremental_backup(username: str,
         activities = set(retryer.call(client.list_activities))
         log.info("account has a total of %d activities", len(activities))
 
-        missing_activities = garminexport.backup.need_backup(activities, backup_dir, export_formats)
+        missing_activities = garminexport.backup.need_backup(
+            activities, backup_dir, export_formats
+        )
         backed_up = activities - missing_activities
         log.info("%s contains %d backed up activities", backup_dir, len(backed_up))
 
@@ -68,10 +79,17 @@ def incremental_backup(username: str,
 
         for index, activity in enumerate(missing_activities):
             id, start = activity
-            log.info("backing up activity %s from %s (%d out of %d) ...",
-                     id, start, index + 1, len(missing_activities))
+            log.info(
+                "backing up activity %s from %s (%d out of %d) ...",
+                id,
+                start,
+                index + 1,
+                len(missing_activities),
+            )
             try:
-                garminexport.backup.download(client, activity, retryer, backup_dir, export_formats)
+                garminexport.backup.download(
+                    client, activity, retryer, backup_dir, export_formats
+                )
             except Exception as e:
                 log.error("failed with exception: %s", e)
                 if not ignore_errors:

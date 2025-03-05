@@ -17,6 +17,7 @@ fix(auth): add support for setting auth header and cookie manually (#1 - @ryegua
 - ci: update setup-python action to v5.4.0 and pin action to protect against supply chain attacks
 - chore: add dependabot configuration for monthly updates
 - feat: add treefmt as code formatting multiplexer
+- style: format code for consistency and readability
 
 #### Documentation
 
