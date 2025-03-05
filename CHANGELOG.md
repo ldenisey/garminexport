@@ -13,6 +13,7 @@
 - ci: pin ubuntu-24.04 as runner OS
 - ci: update actions/checkout to v4.2.1 and pin GitHub action to protect against supply chain attacks
 - ci: update setup-python action to v5.4.0 and pin action to protect against supply chain attacks
+- chore: add dependabot configuration for monthly updates
 
 #### Documentation
 
