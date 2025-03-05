@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat: add gear support (#2- @drewbrew)
+
 ### Improvements and bug fixes
 
 #### Build, CI, internal
