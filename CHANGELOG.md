@@ -15,5 +15,7 @@
 #### Documentation
 
 - README: pip command that works with zsh
+- docs: introduce changelog
+- docs: update repository URLs in README and setup.cfg
 
 [unreleased]: https://github.com/garminexport/garminexport/compare/v0.5.0...HEAD
