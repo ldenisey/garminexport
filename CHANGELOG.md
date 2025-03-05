@@ -8,6 +8,8 @@
 
 ### Improvements and bug fixes
 
+fix(auth): add support for setting auth header and cookie manually (#1 - @ryeguard)
+
 #### Build, CI, internal
 
 - ci: pin ubuntu-24.04 as runner OS
