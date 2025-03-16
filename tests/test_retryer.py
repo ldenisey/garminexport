@@ -69,7 +69,9 @@ class TestRetryer(unittest.TestCase):
 
     def test_bla(self):
         retryer = Retryer()
-        func = lambda: int(time.time())
+
+        def func():
+            return int(time.time())
 
         returnval = retryer.call(func)
         print(returnval)
