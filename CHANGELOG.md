@@ -9,6 +9,7 @@
 ### Improvements and bug fixes
 
 fix(auth): add support for setting auth header and cookie manually (#1 - @ryeguard)
+fix: correct string formatting in GaveUpError message ([b8dc7d5](https://github.com/garminexport/garminexport/commit/b8dc7d534ccddf85856736decde6734f6c177de6) - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -19,6 +20,7 @@ fix(auth): add support for setting auth header and cookie manually (#1 - @ryegua
 - feat: add treefmt as code formatting multiplexer ([be256a7](https://github.com/garminexport/garminexport/commit/be256a7366558061df6519795c78f684f46d7bee) - @JakobLichterfeld)
 - style: format code for consistency and readability ([190e951](https://github.com/garminexport/garminexport/commit/190e95136b3f6f5038a0fde025ae1f0addbad603) - @JakobLichterfeld)
 - ci: update Python version matrix in CI workflow ([06dcaca](https://github.com/garminexport/garminexport/commit/06dcaca35df0a88adc4b74a4304b8b6c0a69c4bf) - @JakobLichterfeld)
+- refactor: remove unused imports ([b02cd60](https://github.com/garminexport/garminexport/commit/b02cd608a8dcc781e40fb9052bd1be46b552b02b) - @JakobLichterfeld)
 
 #### Documentation
 
