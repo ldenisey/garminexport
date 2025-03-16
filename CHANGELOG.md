@@ -24,5 +24,6 @@ fix(auth): add support for setting auth header and cookie manually (#1 - @ryegua
 - README: pip command that works with zsh
 - docs: introduce changelog
 - docs: update repository URLs in README and setup.cfg
+- docs: update README to include authentication via cookie and token (#4 - @JakobLichterfeld)
 
 [unreleased]: https://github.com/garminexport/garminexport/compare/v0.5.0...HEAD
