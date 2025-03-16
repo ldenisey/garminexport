@@ -21,6 +21,7 @@ fix: correct string formatting in GaveUpError message ([b8dc7d5](https://github.
 - style: format code for consistency and readability ([190e951](https://github.com/garminexport/garminexport/commit/190e95136b3f6f5038a0fde025ae1f0addbad603) - @JakobLichterfeld)
 - ci: update Python version matrix in CI workflow ([06dcaca](https://github.com/garminexport/garminexport/commit/06dcaca35df0a88adc4b74a4304b8b6c0a69c4bf) - @JakobLichterfeld)
 - refactor: remove unused imports ([b02cd60](https://github.com/garminexport/garminexport/commit/b02cd608a8dcc781e40fb9052bd1be46b552b02b) - @JakobLichterfeld)
+- refactor(tests): convert lambda to named function in test_bla ([8d80561](https://github.com/garminexport/garminexport/commit/8d80561f58fc8859c3ed3516353f4da5997224f5) - @JakobLichterfeld)
 
 #### Documentation
 
