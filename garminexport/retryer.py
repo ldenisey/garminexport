@@ -218,7 +218,7 @@ class Retryer(object):
             # should we make another attempt?
             if not self.stop_strategy.should_continue(attempts, elapsed_time):
                 raise GaveUpError(
-                    "{{}}: gave up after {} failed attempt(s)".format(name, attempts)
+                    "{}: gave up after {} failed attempt(s)".format(name, attempts)
                 )
             delay = self.delay_strategy.next_delay(attempts)
             log.info(
