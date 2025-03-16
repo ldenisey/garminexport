@@ -140,6 +140,20 @@ activity file is prefixed by its upload timestamp and its activity id.
 - `garmin-upload-activity`: uplad a single Garmin Connect activity file (`.fit`,
   `.gpx`, or `.tcx`). Run with `--help`for more details.
 
+### Authentication via cookie and token instead of username and password
+
+If you have problems with the classic login with username and password, you can alternatively pass an Authorisation header and the JWT_FGP cookie directly from the command line.
+
+Open a Web browser (e.g. Chrome) and log in to your Garmin Connect account. Open the Developer Tools (F12) and go to the Application tab. Under Storage, select Cookies and select the Garmin Connect domain. Copy the value of the `orderToken` and the `JWT_FGP` cookie.
+
+You can then set the appropriate environment variables and run the script, e.g:
+
+```bash
+export TOKEN="longer_token_here"
+export JWT_FGP="shorter-cookie-here"
+garmin-backup --token=$TOKEN --jwt_fgp=$JWT_FGP <username or email>
+```
+
 ## As a library
 
 To build your own tools around the Garmin Connect API you can import the
