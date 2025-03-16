@@ -3,7 +3,7 @@ import getpass
 import logging
 import os
 from datetime import timedelta
-from typing import Callable, List
+from typing import List
 
 import garminexport.backup
 from garminexport.backup import supported_export_formats
